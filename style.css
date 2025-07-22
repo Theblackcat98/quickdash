@@ -296,6 +296,27 @@ body {
     margin-top: 25px;
 }
 
+.modal-footer {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid var(--border-color);
+}
+
+#clear-cache-btn {
+    background-color: var(--error-color);
+    color: var(--primary-bg);
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+#clear-cache-btn:hover {
+    background-color: #d64f4f;
+}
+
 .modal-buttons button {
     padding: 12px 25px;
     border: none;

@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const githubTokenInput = document.getElementById('github-token');
     const saveConfigBtn = document.getElementById('save-config-btn');
     const cancelConfigBtn = document.getElementById('cancel-config-btn');
+    const clearCacheBtn = document.getElementById('clear-cache-btn');
 
     // --- Configuration Variables ---
     let GITHUB_USERNAME = localStorage.getItem('github_username') || '';
@@ -58,12 +59,28 @@ document.addEventListener('DOMContentLoaded', () => {
         showElement(noReposMessage);
     };
 
-    // --- GitHub API Fetcher ---
+    // --- GitHub API Fetcher with Caching ---
+    const CACHE_EXPIRATION_MS = 60 * 60 * 1000; // 1 hour
+
     async function fetchGitHubData(url, token) {
+        const cacheKey = `github_cache_${url}`;
+        const cachedItem = localStorage.getItem(cacheKey);
+
+        if (cachedItem) {
+            const { data, timestamp } = JSON.parse(cachedItem);
+            if (Date.now() - timestamp < CACHE_EXPIRATION_MS) {
+                console.log(`[Cache] HIT for ${url}`);
+                return data;
+            } else {
+                console.log(`[Cache] EXPIRED for ${url}`);
+                localStorage.removeItem(cacheKey);
+            }
+        }
+
+        console.log(`[Cache] MISS for ${url}. Fetching from API.`);
         const headers = {
-            'Accept': 'application/vnd.github.v3+json', // Default for most GitHub API calls
+            'Accept': 'application/vnd.github.v3+json',
         };
-        // For starred repos with starred_at timestamp
         if (url.includes('/starred')) {
             headers['Accept'] = 'application/vnd.github.v3.star+json';
         }
@@ -77,10 +94,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 const errorData = await response.json();
                 throw new Error(errorData.message || `HTTP error! Status: ${response.status}`);
             }
-            return await response.json();
+            const data = await response.json();
+
+            // Cache the new data
+            const itemToCache = {
+                data: data,
+                timestamp: Date.now(),
+            };
+            localStorage.setItem(cacheKey, JSON.stringify(itemToCache));
+
+            return data;
         } catch (error) {
             console.error('Failed to fetch from GitHub API:', error);
-            throw error; // Re-throw to be caught by the caller
+            throw error;
         }
     }
 
@@ -230,6 +256,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function clearCache() {
+        Object.keys(localStorage).forEach(key => {
+            if (key.startsWith('github_cache_')) {
+                localStorage.removeItem(key);
+            }
+        });
+        alert('Cache cleared!');
+    }
+
     // --- Event Listeners ---
     configureBtn.addEventListener('click', showConfigModal);
     saveConfigBtn.addEventListener('click', () => {
@@ -238,6 +273,7 @@ document.addEventListener('DOMContentLoaded', () => {
         initializePage(); // Re-initialize with new config
     });
     cancelConfigBtn.addEventListener('click', hideConfigModal);
+    clearCacheBtn.addEventListener('click', clearCache);
 
     // Initial load
     initializePage();
