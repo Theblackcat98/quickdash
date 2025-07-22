@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const clearCacheBtn = document.getElementById('clear-cache-btn');
 
     // --- Configuration Variables ---
-    let GITHUB_USERNAME = localStorage.getItem('github_username') || '';
+    let GITHUB_USERNAME = localStorage.getItem('github_username') || config.DEFAULT_USERNAME;
     let GITHUB_TOKEN = localStorage.getItem('github_token') || '';
 
     // --- Utility Functions ---
@@ -60,15 +60,13 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- GitHub API Fetcher with Caching ---
-    const CACHE_EXPIRATION_MS = 60 * 60 * 1000; // 1 hour
-
     async function fetchGitHubData(url, token) {
         const cacheKey = `github_cache_${url}`;
         const cachedItem = localStorage.getItem(cacheKey);
 
         if (cachedItem) {
             const { data, timestamp } = JSON.parse(cachedItem);
-            if (Date.now() - timestamp < CACHE_EXPIRATION_MS) {
+            if (Date.now() - timestamp < config.CACHE_EXPIRATION_MS) {
                 console.log(`[Cache] HIT for ${url}`);
                 return data;
             } else {
@@ -125,8 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchStarredRepos(username, token) {
         if (!username) return [];
         try {
-            const url = `https://api.github.com/users/${username}/starred?per_page=100`; // Fetch up to 100 repos per page
-            // You might need pagination for more than 100, but for a demo, this is fine.
+            const url = `https://api.github.com/users/${username}/starred?per_page=${config.REPOS_PER_PAGE}`;
             return await fetchGitHubData(url, token);
         } catch (error) {
             showError(`Failed to load starred repositories for ${username}. ${error.message}`);
@@ -169,11 +166,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // --- CUSTOMIZABLE INFO ---
-        // You can add more user details here by accessing properties of the `user` object.
-        // For example:
-        // document.getElementById('user-company').textContent = user.company || '';
-        // document.getElementById('user-email').textContent = user.email || '';
-        // Remember to add corresponding <p> tags with these IDs in index.html!
+        const customInfoSection = document.getElementById('custom-info');
+        customInfoSection.querySelector('h3').textContent = config.CUSTOM_INFO_TITLE;
+        customInfoSection.querySelector('div').innerHTML = config.CUSTOM_INFO_CONTENT;
     }
 
     function renderRepos(repos) {
