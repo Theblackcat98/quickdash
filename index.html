@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Starred Repos Viewer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <aside id="user-info-sidebar">
+            <div class="sidebar-header">
+                <img id="user-avatar" src="" alt="User Avatar" class="hidden">
+                <h2 id="user-name"></h2>
+                <button id="configure-btn">Configure User</button>
+            </div>
+            <div id="user-details">
+                <p id="user-bio"></p>
+                <p id="user-location"></p>
+                <p><a id="user-blog" href="#" target="_blank" rel="noopener noreferrer" class="hidden"></a></p>
+                <p>Public Repos: <span id="public-repos"></span></p>
+                <p>Followers: <span id="followers"></span></p>
+                <p>Following: <span id="following"></span></p>
+                <!-- Add more info here as desired, by modifying script.js as well -->
+            </div>
+            <div id="custom-info">
+                <h3>My Custom Section</h3>
+                <p>This is a customizable area.</p>
+                <p>You can add any text or static content here.</p>
+            </div>
+        </aside>
+
+        <main id="repo-grid-container">
+            <h1 id="main-title">Starred Repositories</h1>
+            <div id="loading-message" class="message hidden">Loading...</div>
+            <div id="error-message" class="message hidden"></div>
+            <div id="repo-grid">
+                <!-- Repository cards will be inserted here by JavaScript -->
+            </div>
+            <div id="no-repos-message" class="message hidden">No starred repositories found for this user, or an error occurred.</div>
+        </main>
+    </div>
+
+    <!-- Configuration Modal -->
+    <div id="config-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2>Configure GitHub User</h2>
+            <p>Enter the GitHub username whose starred repos you want to see.</p>
+            <p>Optionally, provide a Personal Access Token (PAT) for higher rate limits and to access private starred repos (if any). Leave blank for public access only.</p>
+            <div class="form-group">
+                <label for="github-username">GitHub Username:</label>
+                <input type="text" id="github-username" placeholder="e.g., octocat">
+            </div>
+            <div class="form-group">
+                <label for="github-token">GitHub Personal Access Token (PAT):</label>
+                <input type="password" id="github-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
+                <p class="warning-text"><strong>Warning:</strong> For public deployments, use a server-side proxy to keep your PAT secure.</p>
+            </div>
+            <div class="modal-buttons">
+                <button id="save-config-btn">Save & Load</button>
+                <button id="cancel-config-btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
