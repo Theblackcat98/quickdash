@@ -1,14 +1,14 @@
 // --- App Configuration ---
 const config = {
     // Default GitHub username to load
-    DEFAULT_USERNAME: 'octocat',
+    DEFAULT_USERNAME: 'theblackcat98',
 
     // Number of starred repositories to fetch per page
-    REPOS_PER_PAGE: 100,
+    REPOS_PER_PAGE: 50,
 
     // --- Sidebar Customization ---
     // Section title for the custom information block
-    CUSTOM_INFO_TITLE: 'My Custom Section',
+    CUSTOM_INFO_TITLE: 'My Starred Repos!',
 
     // Content for the custom information block (can be simple text or HTML)
     CUSTOM_INFO_CONTENT: `
